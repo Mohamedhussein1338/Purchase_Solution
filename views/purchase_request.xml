@@ -1,0 +1,150 @@
+<odoo>
+    <data>
+
+        <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <group>
+
+                        <button string="View Purchase Request" type="object" class="oe_highlight" icon="fa-list-ol"
+                                name="action_view_purchase_request"/>
+                    </group>
+                </data>
+            </field>
+        </record>
+
+        <record id="action_purchase_order" model="ir.actions.act_window">
+            <field name="name">Related Purchase Orders</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="view_id" ref="purchase.purchase_order_form"/>
+            <field name="domain">[('purchase_requests_id', '=', active_id)]</field>
+        </record>
+
+
+        <!-- Action for Purchase Request -->
+        <record id="action_view_purchase_request" model="ir.actions.act_window">
+            <field name="name">Purchase request</field>
+            <field name="res_model">purchase.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to view purchase request related to this purchase request.
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_purchases_requests" name="Purchase Requests" parent="purchase.menu_purchase_root"
+                  sequence="2" action="action_view_purchase_request"/>
+
+        <record id="purchase_request_tree_view" model="ir.ui.view">
+            <field name="name">purchase.request.tree.view</field>
+            <field name="model">purchase.request</field>
+            <field name="arch" type="xml">
+                <tree>
+
+                    <field name="state" options='{"no_create": True}'/>
+                    <!-- Field relation with analytical account model -->
+                    <field name="analytic_account_id"/>
+                    <!-- Field creation date -->
+                    <field name="date"/>
+                    <!-- Field created by -->
+                    <field name="created_by"/>
+                    <!-- Requested by -->
+                    <field name="requested_by"/>
+                    <!-- Requested on -->
+                    <field name="requested_on" optional="show"/>
+
+                </tree>
+
+            </field>
+        </record>
+
+
+        <!-- Purchase Request Model -->
+        <record id="view_purchase_request_form" model="ir.ui.view">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Request" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                    <header>
+                        <button name="action_draft" type="object" string="Draft"
+                                attrs="{'invisible':[('state','=','confirmed')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                        <button name="action_pur_confirm" string="Confirmed" class="oe_highlight" data-hotkey="v"
+                                type="object"
+                                attrs="{'invisible': [('state', '!=', 'confirmed')]}"/>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(purchase.purchase_form_action)d" type="action"
+                                    class="oe_stat_button"
+                                    icon="fa-pencil-square-o">
+                                <field name="purchase_order_count" widget="statinfo" string="Purchase2"/>
+                            </button>
+                            <button string="View Purchase Orders" type="object" class="oe_highlight" icon="fa-list-ol"
+                                    name="action_view_purchase_order"/>
+                            <button string="View Purchase3" type="object" class="oe_highlight" icon="fa-list-ol"
+                                    name="action_view_purchase_orders"/>
+                            <button string="View Purchase4" type="object" class="oe_highlight" icon="fa-list-ol"
+                                    name="smartbuttun"/>
+                            <button string="View Purchase5" type="object" class="oe_highlight" icon="fa-list-ol"
+                                    name="action_purchase_order"/>
+
+                        </div>
+                        <group>
+                            <!-- Field state -->
+                            <field name="state" options='{"no_create": True}'/>
+                            <!-- Field relation with analytical account model -->
+                            <field name="analytic_account_id" attrs="{'readonly': [('state', '!=', 'confirmed')]}"/>
+                            <!-- Field creation date -->
+                            <field name="date" readonly="1"/>
+                            <!-- Field created by -->
+                            <field name="created_by" readonly="1"/>
+                            <!-- Requested by -->
+                            <field name="requested_by" attrs="{'readonly': [('state', '!=', 'confirmed')]}"/>
+                            <!-- Requested on -->
+                            <field name="requested_on" attrs="{'readonly': [('state', '!=', 'confirmed')]}"/>
+                        </group>
+                        <notebook>
+                            <!-- Field One2many Purchase Request Lines -->
+                            <page string="Purchase Request Lines">
+
+                                <field name="purchase_request_lines"
+                                       attrs="{'readonly': [('state', '!=', 'confirmed')]}">
+                                    <tree>
+                                        <field name="product_id"/>
+                                        <field name="vendor_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price_id"/>
+                                        <field name="uom_id"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="product_id"/>
+                                            <field name="vendor_id"/>
+                                            <field name="quantity"/>
+                                            <field name="price_id"/>
+                                            <field name="uom_id"/>
+                                        </group>
+                                    </form>
+                                </field>
+
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
